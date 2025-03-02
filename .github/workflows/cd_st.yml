@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - run: |
-          echo "${{ secrets.CI_KEY }}" &> ~/ssh_key"
+          echo "${{ secrets.CI_KEY }}" &> ~/ssh_key
           chmod 600 ~/ssh_key
           ssh -i ~/ssh_key ubuntu@18.212.54.148
           cd ci-next-app && git pull
