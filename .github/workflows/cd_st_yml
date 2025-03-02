@@ -1,0 +1,20 @@
+name: Deploy to staging
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  redploy_everything:
+    runs on: ubuntu-latest
+    name: Deploying everything to staging
+
+    steps:
+      - run: |
+          echo "${{ secrets.CI_KEY }}" &> ~/ssh_key"
+          ssh -i ~/ssh_key ubuntu@18.212.54.148
+          cd ci-next-app && git pull
+          pnpm install
+          pnpm run build
+          pm2 restart fe
+          pm2 restart http
+          pm2 restart ws
