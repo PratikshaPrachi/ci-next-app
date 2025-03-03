@@ -26,9 +26,10 @@ jobs:
       # Set up SSH
       - name: Set up SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.CI_KEY }}" > ~/ssh_key
+          mkdir -p /home/runner/.ssh
+          touch /home/runner/.ssh/known_hosts
+          chmod 600 ~/ssh_key
           echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
       # Deploy to staging server
