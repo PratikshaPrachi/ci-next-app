@@ -27,7 +27,9 @@ jobs:
       - name: Set up SSH
         run: |
           echo "${{ secrets.CI_KEY }}" > ~/.ssh_key
-          mkdir -p /home/runner/.ssh_key
+          if [ ! -d ~/.ssh ]; then
+            mkdir -p ~/.ssh
+          fi
           touch /home/runner/.ssh/known_hosts
           chmod 600 ~/.ssh_key
           echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
