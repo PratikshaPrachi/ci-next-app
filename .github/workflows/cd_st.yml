@@ -38,13 +38,14 @@ jobs:
       - name: Deploy to Staging Server
         run: |
           ssh -i ~/.ssh_key ubuntu@18.212.54.148 -o StrictHostKeyChecking=no -t "
-            cd ci-next-app &&
-            git pull origin main &&
-            pnpm install &&
-            pnpm run build &&
-            pm2 restart fe &&
-            pm2 restart http &&
-            pm2 restart ws
+          curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm &
+          cd ci-next-app &&
+          git pull origin main &&
+          pnpm install &&
+          pnpm run build &&
+          pm2 restart fe &&
+          pm2 restart http &&
+          pm2 restart ws
           "
 
       
