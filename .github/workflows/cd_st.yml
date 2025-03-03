@@ -38,8 +38,14 @@ jobs:
           STAGING_SERVER_IP: 18.212.54.148
         run: |
           ssh -i ~/.ssh_key ubuntu@$STAGING_SERVER_IP -o StrictHostKeyChecking=no "
-            # Install pnpm globally using npm
-            npm install -g pnpm
+            # Install Node.js and npm if not already installed
+            if ! command -v node &> /dev/null; then
+              curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+            fi
+
+            # Install pnpm globally
+            sudo npm install -g pnpm
 
             # Ensure pnpm is in the PATH
             export PATH=\$HOME/.local/share/pnpm:\$PATH
