@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
 
       # Install pnpm
       - name: Install pnpm
@@ -38,12 +38,11 @@ jobs:
           STAGING_SERVER_IP: 18.212.54.148
         run: |
           ssh -i ~/.ssh_key ubuntu@$STAGING_SERVER_IP -o StrictHostKeyChecking=no "
+            # Install pnpm globally using npm
             npm install -g pnpm
-            # Install pnpm if not already installed
-            if ! command -v pnpm &> /dev/null; then
-              curl -fsSL https://get.pnpm.io/install.sh | sh -
-              export PATH=\$HOME/.local/share/pnpm:\$PATH
-            fi
+
+            # Ensure pnpm is in the PATH
+            export PATH=\$HOME/.local/share/pnpm:\$PATH
 
             # Navigate to the project directory
             cd ci-next-app
