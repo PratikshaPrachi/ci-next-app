@@ -11,13 +11,13 @@ jobs:
 
     steps:
       # Checkout the code
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "18"
 
       # Install pnpm
       - name: Install pnpm
@@ -36,16 +36,16 @@ jobs:
 
       # Deploy to staging server
       - name: Deploy to Staging Server
+        env:
+          STAGING_SERVER_IP: 18.212.54.148
         run: |
-          ssh -i ~/.ssh_key ubuntu@18.212.54.148 -o StrictHostKeyChecking=no -t "
-          curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm &
-          cd ci-next-app &&
-          git pull origin main &&
-          pnpm install &&
-          pnpm run build &&
-          pm2 restart fe &&
-          pm2 restart http &&
-          pm2 restart ws
+          ssh -i ~/.ssh_key ubuntu@$STAGING_SERVER_IP -o StrictHostKeyChecking=no "
+            curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm &&
+            cd ci-next-app &&
+            git pull origin main &&
+            pnpm install &&
+            pnpm run build &&
+            pm2 restart fe &&
+            pm2 restart http &&
+            pm2 restart ws
           "
-
-      
