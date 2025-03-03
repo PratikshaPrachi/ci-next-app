@@ -19,7 +19,7 @@ jobs:
           echo "${{secrets.KNOWN_HOSTS}}" > /home/runner/.ssh/known_hosts
           chmod 600 ~/ssh_key
           npm install -g pnpm
-          ssh -i ~/ssh_key ubuntu@18.212.54.148 -t "cd ci-next-app && git pull origin main && pnpm install && pnpm run build && pm2 restart fe && pm2 restart http && pm2 restart ws"
+          ssh -i ~/ssh_key ubuntu@18.212.54.148 -t "cd ci-next-app && git pull origin main && npm install -g pnpm && pnpm install && pnpm run build && pm2 restart fe && pm2 restart http && pm2 restart ws"
           
           
           
