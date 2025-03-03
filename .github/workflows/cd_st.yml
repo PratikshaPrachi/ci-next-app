@@ -35,7 +35,7 @@ jobs:
       # Deploy to staging server
       - name: Deploy to Staging Server
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@18.212.54.148 -o StrictHostKeyChecking=no -t "
+          ssh -i ~/.ssh_key ubuntu@18.212.54.148 -o StrictHostKeyChecking=no -t "
             cd ci-next-app &&
             git pull origin main &&
             pnpm install &&
