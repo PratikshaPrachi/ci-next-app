@@ -1,25 +1,43 @@
 name: Deploy to staging
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # Trigger when there's a push to the `main` branch
 
 jobs:
-  redploy_everything:
+  deploy_everything:
     runs-on: ubuntu-latest
     name: Deploying everything to staging
 
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - run: |
+      # Set up SSH keys and known hosts for secure SSH communication
+      - name: Set up SSH
+        run: |
+          # Create SSH key file and add it to the runner's SSH configuration
           echo "${{ secrets.CI_KEY }}" > ~/ssh_key
-          mkdir -p /home/runner/.ssh
-          touch /home/runner/.ssh/known_hosts
-          echo "${{secrets.KNOWN_HOSTS}}" > /home/runner/.ssh/known_hosts
           chmod 600 ~/ssh_key
-          npm install -g pnpm
-          ssh -i ~/ssh_key ubuntu@18.212.54.148 -t "cd ci-next-app && git pull origin main && npm install -g pnpm && pnpm install && pnpm run build && pm2 restart fe && pm2 restart http && pm2 restart ws"
-          
-          
-          
+
+          # Set up known hosts for SSH to avoid prompts
+          mkdir -p /home/runner/.ssh
+          echo "${{ secrets.KNOWN_HOSTS }}" > /home/runner/.ssh/known_hosts
+
+      # Install pnpm globally
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # SSH into the staging server, pull the latest changes, install dependencies, build the project, and restart pm2 services
+      - name: Deploy to Staging Server
+        run: |
+          ssh -i ~/ssh_key ubuntu@18.212.54.148 -o StrictHostKeyChecking=no -t "
+            cd ci-next-app && 
+            git pull origin main && 
+            pnpm install && 
+            pnpm run build && 
+            pm2 restart fe && 
+            pm2 restart http && 
+            pm2 restart ws
+          "
