@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '16'
 
       # Install pnpm
       - name: Install pnpm
@@ -27,12 +27,10 @@ jobs:
       - name: Set up SSH
         run: |
           echo "${{ secrets.CI_KEY }}" > ~/.ssh_key
-          if [ ! -d ~/.ssh ]; then
-            mkdir -p ~/.ssh
-          fi
-          touch /home/runner/.ssh/known_hosts
           chmod 600 ~/.ssh_key
+          mkdir -p ~/.ssh
           echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
       # Deploy to staging server
       - name: Deploy to Staging Server
@@ -40,12 +38,27 @@ jobs:
           STAGING_SERVER_IP: 18.212.54.148
         run: |
           ssh -i ~/.ssh_key ubuntu@$STAGING_SERVER_IP -o StrictHostKeyChecking=no "
-            curl -fsSL https://get.pnpm.io/install.sh | sh - &&
-            cd ci-next-app &&
-            git pull origin main &&
-            pnpm install &&
-            pnpm run build &&
-            pm2 restart fe &&
-            pm2 restart http &&
+            npm install -g pnpm
+            # Install pnpm if not already installed
+            if ! command -v pnpm &> /dev/null; then
+              curl -fsSL https://get.pnpm.io/install.sh | sh -
+              export PATH=\$HOME/.local/share/pnpm:\$PATH
+            fi
+
+            # Navigate to the project directory
+            cd ci-next-app
+
+            # Pull the latest changes
+            git pull origin main
+
+            # Install dependencies
+            pnpm install
+
+            # Build the project
+            pnpm run build
+
+            # Restart PM2 processes
+            pm2 restart fe
+            pm2 restart http
             pm2 restart ws
           "
