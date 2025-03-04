@@ -21,12 +21,12 @@ jobs:
       # Set up SSH
       - name: Set up SSH & deploy
         run: |
-          echo "${{ secrets.CI_KEY }}" > ~/.ssh_key
-          chmod 600 ~/.ssh_key
+          echo "${{ secrets.CI_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
           mkdir -p /home/runner/.ssh
-          ls /home/runner/.ssh
           touch /home/runner/.ssh/known_hosts
           echo "${{ secrets.KNOWN_HOSTS }}" > /home/runner/.ssh/known_hosts
+          ls /home/runner/.ssh
           chmod 644 ~/.ssh/known_hosts 
-          ssh -i ~/.ssh_key -o ServerAliveInterval=60 -o ServerAliveCountMax=3 ubuntu@18.212.54.148  -t -t "cd ci-next-app && git pull origin main && curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&
+          ssh -i ~/ssh_key -o ServerAliveInterval=60 -o ServerAliveCountMax=3 ubuntu@18.212.54.148 -t "cd ci-next-app && git pull origin main && curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&
           sudo apt-get install -y nodejs && export PATH=/root/.nvm/versions/node/v22.13.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin && sudo npm install -g pnpm && pnpm install && pnpm run build && pm2 restart fe && pm2 restart http && pm2 restart ws"
