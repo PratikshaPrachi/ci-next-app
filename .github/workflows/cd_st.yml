@@ -13,57 +13,13 @@ jobs:
       # Checkout the code
       - uses: actions/checkout@v3
 
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      # Install pnpm
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       # Set up SSH
       - name: Set up SSH
         run: |
           echo "${{ secrets.CI_KEY }}" > ~/.ssh_key
-          chmod 600 ~/.ssh_key
-          mkdir -p ~/.ssh
-          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
-      # Deploy to staging server
-      - name: Deploy to Staging Server
-        env:
-          STAGING_SERVER_IP: 18.212.54.148
-        run: |
-          ssh -i ~/.ssh_key ubuntu@$STAGING_SERVER_IP -o StrictHostKeyChecking=no "
-            # Install Node.js and npm if not already installed
-            if ! command -v node &> /dev/null; then
-              curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-              sudo apt-get install -y nodejs
-            fi
-
-            # Install pnpm globally
-            sudo npm install -g pnpm
-
-            # Ensure pnpm is in the PATH
-            export PATH=\$HOME/.local/share/pnpm:\$PATH
-
-            # Navigate to the project directory
-            cd ci-next-app
-
-            # Pull the latest changes
-            git pull origin main
-
-            # Install dependencies
-            pnpm install
-
-            # Build the project
-            pnpm run build
-
-            # Restart PM2 processes
-            pm2 restart fe
-            pm2 restart http
-            pm2 restart ws
-          "
+          mkdir -p /home/runner/.ssh
+          ls /home/runner/.ssh
+          touch /home/runner/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOSTS }}" > home/runner/.ssh/known_hosts
+          chmod 700 /home/runner/ssh_key
+          ssh -i ~/ssh_key ubuntu@18.212.54.148  -t "cd ci-next-app && git pull origin main && export PATH=/root/.nvm/versions/node/v22.13.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin && npm install -g pnpm && pnpm install && pnpm run build && pm2 restart fe && pm2 restart http && pm2 restart ws"
