@@ -19,7 +19,7 @@ jobs:
           node-version: '18.x'
 
       # Set up SSH
-      - name: Set up SSH
+      - name: Set up SSH & deploy
         run: |
           echo "${{ secrets.CI_KEY }}" > ~/.ssh_key
           chmod 600 ~/.ssh_key
