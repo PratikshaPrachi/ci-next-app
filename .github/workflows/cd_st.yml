@@ -17,6 +17,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+          
+      - name: Install PM2
+        run: npm install -g pm2
 
       # Set up SSH
       - name: Set up SSH & deploy
