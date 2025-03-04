@@ -13,6 +13,11 @@ jobs:
       # Checkout the code
       - uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
       # Set up SSH
       - name: Set up SSH
         run: |
